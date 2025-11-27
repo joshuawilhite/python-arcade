@@ -97,6 +97,11 @@ def play_coin_flip(player_name):
     print("\n=== Coin Flip ===")
     print("Type 'heads' or 'tails'. Type 'm' for menu, 'q' to quit.")
 
+    heads_count = 0
+    tails_count = 0
+    wins = 0
+    losses = 0
+
     while True:
         choice = input("Your call (heads/tails): ").lower().strip()
 
@@ -105,6 +110,12 @@ def play_coin_flip(player_name):
             quit()
 
         if choice == 'm':
+            total_flips = heads_count + tails_count
+            if total_flips > 0:
+                print(f"\nSession stats for {player_name}")
+                print(f" Total flips: {total_flips}")
+                print(f"  Heads: {heads_count}, Tails: {tails_count}")
+                print(f"  Wins: {wins}, Losses: {losses}\n")
             return
         
         if choice not in ("heads", "tails"):
@@ -114,13 +125,26 @@ def play_coin_flip(player_name):
         result = random.choice(["heads", "tails"])
         print(f"The coin landed on {result}!")
 
+        if result == "heads":
+            heads_count += 1
+        else:
+            tails_count += 1
+
         if choice == result:
             print("Nice! You guessed it right!")
+            wins += 1
         else:
             print("Oops, better luck next time.")
+            losses += 1
 
         again = input("Flip again? (y/n): ").lower()
         if again != 'y':
+            total_flips = heads_count + tails_count
+            if total_flips > 0:
+                print(f"\nSession stats for {player_name}:")
+                print(f"  Total flips: {total_flips}")
+                print(f"  Heads: {heads_count}, Tails: {tails_count}")
+                print(f"  Wins: {wins}, Losses: {losses}\n")
             return
 
 #Menu

@@ -97,54 +97,75 @@ def play_coin_flip(player_name):
     print("\n=== Coin Flip ===")
     print("Type 'heads' or 'tails'. Type 'm' for menu, 'q' to quit.")
 
-    heads_count = 0
-    tails_count = 0
+    total_flips = 0
     wins = 0
     losses = 0
+    current_streak = 0
+    best_streak = 0
 
     while True:
         choice = input("Your call (heads/tails): ").lower().strip()
 
         if choice == 'q':
             print(f"Thanks for playing, {player_name}! Goodbye!")
-            quit()
+            return
 
         if choice == 'm':
-            total_flips = heads_count + tails_count
             if total_flips > 0:
-                print(f"\nSession stats for {player_name}")
-                print(f" Total flips: {total_flips}")
-                print(f"  Heads: {heads_count}, Tails: {tails_count}")
-                print(f"  Wins: {wins}, Losses: {losses}\n")
+                print(f"\n=== {player_name}'s Coin Flip Stats (this session) ===")
+                print(f"Total flips: {total_flips}")
+                print(f"Wins: {wins}, Losses: {losses}")
+                win_rate = (wins / total_flips) * 100
+                print(f"Win rate: {win_rate:.1f}%")
+                print(f"Best streak: {best_streak}\n")
             return
         
+        if choice == "stats":
+            if total_flips == 0:
+                print("\nNo flips yet this session. Start playing first!\n")
+            else:
+                print(f"\n=== {player_name}'s Coin Flip Stats (so far) ===")
+                print(f"Total flips: {total_flips}")
+                print(f"Wins: {wins}, Losses: {losses}")
+                win_rate = (wins / total_flips) * 100
+                print(f"Win rate: {win_rate:.1f}%")
+                print(f"Current streak: {current_streak}")
+                print(f"Best streak: {best_streak}\n")
+            continue
+        
         if choice not in ("heads", "tails"):
-            print("Please type 'heads' or 'tails' (or 'm' for menu).")
+            print("Please type 'heads' or 'tails' (or 'stats', 'm', 'q').")
             continue
 
         result = random.choice(["heads", "tails"])
         print(f"The coin landed on {result}!")
 
-        if result == "heads":
-            heads_count += 1
-        else:
-            tails_count += 1
+        total_flips += 1
 
         if choice == result:
             print("Nice! You guessed it right!")
             wins += 1
+            current_streak += 1
+            if current_streak > best_streak:
+                best_streak = current_streak
+                print(f"🔥 New best streak: {best_streak}!")
+            else:
+                print(f"Current streak: {current_streak}")
         else:
             print("Oops, better luck next time.")
             losses += 1
+            current_streak = 0
+            print("Streak reset to 0.")
 
         again = input("Flip again? (y/n): ").lower()
         if again != 'y':
-            total_flips = heads_count + tails_count
             if total_flips > 0:
-                print(f"\nSession stats for {player_name}:")
-                print(f"  Total flips: {total_flips}")
-                print(f"  Heads: {heads_count}, Tails: {tails_count}")
-                print(f"  Wins: {wins}, Losses: {losses}\n")
+                print(f"\n=== {player_name}'s Coin Flip Stats (this session) ===")
+                print(f"Total flips: {total_flips}")
+                print(f"Wins: {wins}, Losses: {losses}")
+                win_rate = (wins / total_flips) * 100
+                print(f"Win rate: {win_rate:.1f}%")
+                print(f"Best streak: {best_streak}\n")
             return
 
 #Menu

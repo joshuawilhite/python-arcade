@@ -93,9 +93,10 @@ def play_guess_number(player_name, highscores) -> str:
 #Game 2
 
 def play_coin_flip(player_name):
-    """Simple second game: guess heads or tails."""
+    """Coin Flip game with betting, streaks, and stats."""
     print("\n=== Coin Flip ===")
-    print("Type 'heads' or 'tails'. Type 'm' for menu, 'q' to quit.")
+    print("Guess heads or tails and bet coins.")
+    print("Commands: 'heads', 'tails', 'stats', 'm' (menu), 'q' (quit game).")
 
     total_flips = 0
     wins = 0
@@ -103,21 +104,30 @@ def play_coin_flip(player_name):
     current_streak = 0
     best_streak = 0
 
+    # Starting currency for this session
+    coins = 100
+    print(f"\nYou start with {coins} coins.")
+
     while True:
+        print(f"\nCurrent coins: {coins}")
         choice = input("Your call (heads/tails): ").lower().strip()
 
         if choice == 'q':
             print(f"Thanks for playing, {player_name}! Goodbye!")
-            return
+            quit()  # exits whole program; change to 'return' if you only want to go back to menu
 
         if choice == 'm':
+            # Show final stats for this session, then go back to menu
             if total_flips > 0:
                 print(f"\n=== {player_name}'s Coin Flip Stats (this session) ===")
                 print(f"Total flips: {total_flips}")
                 print(f"Wins: {wins}, Losses: {losses}")
                 win_rate = (wins / total_flips) * 100
                 print(f"Win rate: {win_rate:.1f}%")
-                print(f"Best streak: {best_streak}\n")
+                print(f"Best streak: {best_streak}")
+                print(f"Ending coins: {coins}\n")
+            else:
+                print("\nNo flips this session. Back to menu.\n")
             return
         
         if choice == "stats":
@@ -130,13 +140,33 @@ def play_coin_flip(player_name):
                 win_rate = (wins / total_flips) * 100
                 print(f"Win rate: {win_rate:.1f}%")
                 print(f"Current streak: {current_streak}")
-                print(f"Best streak: {best_streak}\n")
+                print(f"Best streak: {best_streak}")
+                print(f"Current coins: {coins}\n")
             continue
         
         if choice not in ("heads", "tails"):
             print("Please type 'heads' or 'tails' (or 'stats', 'm', 'q').")
             continue
 
+        # ---- Get bet amount ----
+        if coins <= 0:
+            print("\nYou're out of coins! Come back later.\n")
+            return
+
+        while True:
+            bet_input = input(f"How many coins do you want to bet? (1–{coins}): ").strip()
+            if not bet_input.isdigit():
+                print("Please enter a valid number.")
+                continue
+            bet = int(bet_input)
+            if bet < 1:
+                print("Bet must be at least 1 coin.")
+            elif bet > coins:
+                print("You can't bet more coins than you have.")
+            else:
+                break
+
+        # ---- Flip the coin ----
         result = random.choice(["heads", "tails"])
         print(f"The coin landed on {result}!")
 
@@ -146,6 +176,8 @@ def play_coin_flip(player_name):
             print("Nice! You guessed it right!")
             wins += 1
             current_streak += 1
+            coins += bet
+            print(f"You won {bet} coins! New total: {coins}")
             if current_streak > best_streak:
                 best_streak = current_streak
                 print(f"🔥 New best streak: {best_streak}!")
@@ -155,7 +187,14 @@ def play_coin_flip(player_name):
             print("Oops, better luck next time.")
             losses += 1
             current_streak = 0
+            coins -= bet
+            print(f"You lost {bet} coins. New total: {coins}")
             print("Streak reset to 0.")
+
+        if coins <= 0:
+            print("\nYou're out of coins! Game over for this session.\n")
+            print(f"Total flips: {total_flips}, Wins: {wins}, Losses: {losses}")
+            return
 
         again = input("Flip again? (y/n): ").lower()
         if again != 'y':
@@ -165,7 +204,8 @@ def play_coin_flip(player_name):
                 print(f"Wins: {wins}, Losses: {losses}")
                 win_rate = (wins / total_flips) * 100
                 print(f"Win rate: {win_rate:.1f}%")
-                print(f"Best streak: {best_streak}\n")
+                print(f"Best streak: {best_streak}")
+                print(f"Ending coins: {coins}\n")
             return
 
 #Menu
@@ -183,7 +223,7 @@ def main():
         print("\n=== Main Menu ===")
         print("1) Play Guess the Number")
         print("2) Play Coin Flip")
-        print("3) Show Leaderboard")
+        print("3) Show Guess the Number Leaderboard")
         print("4) Change Player")
         print("5) Quit")
 
